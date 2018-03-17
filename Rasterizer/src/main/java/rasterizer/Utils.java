@@ -16,7 +16,7 @@ import java.awt.event.KeyListener;
  * @author A.C. Kockx
  */
 public final class Utils {
-    public Utils() {
+    private Utils() {
     }
 
     /**
@@ -34,6 +34,7 @@ public final class Utils {
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setContentPane(panel);
 
+        //exit when escape key is pressed.
         KeyListener keyListener = new KeyListener() {
             @Override
             public void keyPressed(KeyEvent e) {
