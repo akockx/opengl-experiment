@@ -34,6 +34,47 @@ public final class OpenGLUtils {
         return vertexBufferIds[0];
     }
 
+    public static int createVertexArray(GL3 gl, float[] coordinates, float[] colors, int positionAttributeIndex, int colorAttributeIndex) {
+        int vertexArrayObjectId = OpenGLUtils.createVertexArrayObject(gl);
+        gl.glBindVertexArray(vertexArrayObjectId);
+
+        int positionVboId = OpenGLUtils.createVertexBufferObject(gl);
+        gl.glBindBuffer(GL3.GL_ARRAY_BUFFER, positionVboId);
+        gl.glBufferData(GL3.GL_ARRAY_BUFFER, coordinates.length*Float.BYTES, FloatBuffer.wrap(coordinates), GL3.GL_STATIC_DRAW);
+        gl.glVertexAttribPointer(positionAttributeIndex, 3, GL3.GL_FLOAT, false, 0, 0);
+        gl.glEnableVertexAttribArray(positionAttributeIndex);
+
+        int colorVboId = OpenGLUtils.createVertexBufferObject(gl);
+        gl.glBindBuffer(GL3.GL_ARRAY_BUFFER, colorVboId);
+        gl.glBufferData(GL3.GL_ARRAY_BUFFER, colors.length*Float.BYTES, FloatBuffer.wrap(colors), GL3.GL_STATIC_DRAW);
+        gl.glVertexAttribPointer(colorAttributeIndex, 3, GL3.GL_FLOAT, false, 0, 0);
+        gl.glEnableVertexAttribArray(colorAttributeIndex);
+
+        return vertexArrayObjectId;
+    }
+
+    /**
+     * @return id of created shader program.
+     */
+    public static int createShaderProgram(GL3 gl, String vertexShaderSource, String fragmentShaderSource, int positionAttributeIndex, int colorAttributeIndex) {
+        //create shaders.
+        int vertexShaderId = createShader(gl, GL3.GL_VERTEX_SHADER, vertexShaderSource);
+        int fragmentShaderId = createShader(gl, GL3.GL_FRAGMENT_SHADER, fragmentShaderSource);
+
+        //compile shaders.
+        compileShader(gl, vertexShaderId);
+        compileShader(gl, fragmentShaderId);
+
+        //link shaders into a shader program.
+        int programId = gl.glCreateProgram();
+        gl.glAttachShader(programId, vertexShaderId);
+        gl.glAttachShader(programId, fragmentShaderId);
+        gl.glBindAttribLocation(programId, positionAttributeIndex, "vertex_position");
+        gl.glBindAttribLocation(programId, colorAttributeIndex, "vertex_color");
+        linkShaders(gl, programId);
+        return programId;
+    }
+
     /**
      * @return id of created shader.
      */

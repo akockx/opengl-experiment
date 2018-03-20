@@ -11,6 +11,9 @@ import java.awt.Component;
 import java.awt.GraphicsEnvironment;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 /**
  * @author A.C. Kockx
@@ -67,5 +70,19 @@ public final class Utils {
         }
         frame.setVisible(true);
         return frame;
+    }
+
+    public static String read(InputStream inputStream) throws Exception {
+        StringBuilder builder = new StringBuilder();
+
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
+            String line = reader.readLine();
+            while (line != null) {
+                builder.append(line).append("\n");
+                line = reader.readLine();
+            }
+        }
+
+        return builder.toString();
     }
 }

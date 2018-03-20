@@ -48,7 +48,7 @@ public final class HelloTriangle {
         javax.swing.SwingUtilities.invokeAndWait(new Runnable() {
             @Override
             public void run() {
-                Utils.createAndShowFrame(canvas, "OpenGL canvas", false);
+                Utils.createAndShowFrame(canvas, HelloTriangle.class.getSimpleName(), false);
             }
         });
     }

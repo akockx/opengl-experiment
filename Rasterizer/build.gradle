@@ -4,7 +4,7 @@
 apply plugin: 'java'
 apply plugin: 'application'
 
-mainClassName='rasterizer.HelloTriangle'
+mainClassName='rasterizer.MultiColoredTriangle'
 
 repositories {
     jcenter()
