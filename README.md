@@ -1,7 +1,7 @@
 OpenGL Experiment
 =================
 
-An experiment to learn how to use OpenGL in Java.
+An experiment to learn how to use OpenGL 3 in Java.
 
 Author: A.C. Kockx
 
@@ -10,7 +10,7 @@ Author: A.C. Kockx
 Requirements
 ------------
 
-Java SDK 8 (or higher) and Gradle need to be installed on your system. The code depends on the Java OpenGL (JOGL) third party library (not included). The dependencies are defined in the build.gradle file and will be downloaded automatically by Gradle when needed.
+Java SDK 8 (or higher) and Gradle need to be installed on your system. The code depends on the Java OpenGL (JOGL) third party library (not included). The dependencies are defined in the build.gradle file and will be downloaded automatically by Gradle when needed. In order to run, your system must have a GPU that supports OpenGL 3.
 
 
 
