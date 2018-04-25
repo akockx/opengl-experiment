@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2018 A.C. Kockx, All Rights Reserved.
  */
-package rasterizer;
+package rasterizer.util;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;

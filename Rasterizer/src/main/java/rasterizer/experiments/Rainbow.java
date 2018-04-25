@@ -1,13 +1,17 @@
 /*
  * Copyright (c) 2018 A.C. Kockx, All Rights Reserved.
  */
-package rasterizer;
+package rasterizer.experiments;
 
 import com.jogamp.opengl.GL3;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.awt.GLCanvas;
 import com.jogamp.opengl.math.Matrix4;
+import rasterizer.util.MatrixUtils;
+import rasterizer.util.OpenGLUtils;
+import rasterizer.util.ResourceLoader;
+import rasterizer.util.Utils;
 
 import static java.lang.Math.*;
 

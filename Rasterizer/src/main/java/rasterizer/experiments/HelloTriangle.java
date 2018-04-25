@@ -1,12 +1,14 @@
 /*
  * Copyright (c) 2018 A.C. Kockx, All Rights Reserved.
  */
-package rasterizer;
+package rasterizer.experiments;
 
 import com.jogamp.opengl.GL3;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.awt.GLCanvas;
+import rasterizer.util.OpenGLUtils;
+import rasterizer.util.Utils;
 
 import java.nio.FloatBuffer;
 
