@@ -1,10 +1,10 @@
 #version 130
 
-in vec3 color;
+in vec4 color;
 
-out vec4 outputColor;
+out vec4 fragment_color;
 
 void main() {
     //color from vertex shader is automatically interpolated between vertices.
-    outputColor = vec4(color, 1);
+    fragment_color = color;
 }

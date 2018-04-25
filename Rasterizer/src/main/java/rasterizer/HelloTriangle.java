@@ -5,15 +5,18 @@ package rasterizer;
 
 import com.jogamp.opengl.GL3;
 import com.jogamp.opengl.GLAutoDrawable;
-import com.jogamp.opengl.GLCapabilities;
 import com.jogamp.opengl.GLEventListener;
-import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.awt.GLCanvas;
 
 import java.nio.FloatBuffer;
 
 /**
- * Uses OpenGL 3 to draw a single triangle.
+ * This class uses the minimum amount of code required to draw a single triangle on the screen
+ * using OpenGL 3 and the JOGL (Java OpenGL) framework.
+ * Comments have been added to explain every step.
+ * To keep this class as simple as possible, all coordinates are normalized device coordinates,
+ * therefore no model, view or projection matrices are needed in this class.
+ * Furthermore the shader source code is hard-coded so that all the important parts are contained in a single file.
  *
  * @author A.C. Kockx
  */
@@ -38,16 +41,15 @@ public final class HelloTriangle {
 
     private HelloTriangle() throws Exception {
         //create OpenGL canvas.
-        GLProfile profile = GLProfile.get(GLProfile.GL3);
-        GLCapabilities capabilities = new GLCapabilities(profile);
-        GLCanvas canvas = new GLCanvas(capabilities);
+        GLCanvas canvas = OpenGLUtils.createGLCanvas(800, 600);
+        //canvas can be thought of as an ordinary java.awt.Component. The glEventListener contains all OpenGL-related code.
         canvas.addGLEventListener(glEventListener);
-        canvas.setSize(800, 600);
 
         //init GUI on event-dispatching thread.
         javax.swing.SwingUtilities.invokeAndWait(new Runnable() {
             @Override
             public void run() {
+                //create a JFrame and add canvas to it.
                 Utils.createAndShowFrame(canvas, HelloTriangle.class.getSimpleName(), false);
             }
         });
@@ -95,6 +97,10 @@ public final class HelloTriangle {
         }
 
         @Override
+        public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
+        }
+
+        @Override
         public void display(GLAutoDrawable drawable) {
             GL3 gl = drawable.getGL().getGL3();
 
@@ -114,10 +120,6 @@ public final class HelloTriangle {
 
             int error = gl.glGetError();
             if (error != 0) System.err.println("Error during rendering: " + error);
-        }
-
-        @Override
-        public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
         }
 
         @Override

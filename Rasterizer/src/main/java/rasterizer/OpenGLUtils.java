@@ -4,6 +4,9 @@
 package rasterizer;
 
 import com.jogamp.opengl.GL3;
+import com.jogamp.opengl.GLCapabilities;
+import com.jogamp.opengl.GLProfile;
+import com.jogamp.opengl.awt.GLCanvas;
 
 import java.nio.FloatBuffer;
 
@@ -11,7 +14,19 @@ import java.nio.FloatBuffer;
  * @author A.C. Kockx
  */
 public final class OpenGLUtils {
+    private static final String VERTEX_POSITION = "vertex_position";
+    private static final String VERTEX_COLOR = "vertex_color";
+    private static final String FRAGMENT_COLOR = "fragment_color";
+
     private OpenGLUtils() {
+    }
+
+    public static GLCanvas createGLCanvas(int width, int height) {
+        GLProfile profile = GLProfile.get(GLProfile.GL3);
+        GLCapabilities capabilities = new GLCapabilities(profile);
+        GLCanvas canvas = new GLCanvas(capabilities);
+        canvas.setSize(width, height);
+        return canvas;
     }
 
     /**
@@ -41,13 +56,13 @@ public final class OpenGLUtils {
         int positionVboId = OpenGLUtils.createVertexBufferObject(gl);
         gl.glBindBuffer(GL3.GL_ARRAY_BUFFER, positionVboId);
         gl.glBufferData(GL3.GL_ARRAY_BUFFER, coordinates.length*Float.BYTES, FloatBuffer.wrap(coordinates), GL3.GL_STATIC_DRAW);
-        gl.glVertexAttribPointer(positionAttributeIndex, 3, GL3.GL_FLOAT, false, 0, 0);
+        gl.glVertexAttribPointer(positionAttributeIndex, 4, GL3.GL_FLOAT, false, 0, 0);
         gl.glEnableVertexAttribArray(positionAttributeIndex);
 
         int colorVboId = OpenGLUtils.createVertexBufferObject(gl);
         gl.glBindBuffer(GL3.GL_ARRAY_BUFFER, colorVboId);
         gl.glBufferData(GL3.GL_ARRAY_BUFFER, colors.length*Float.BYTES, FloatBuffer.wrap(colors), GL3.GL_STATIC_DRAW);
-        gl.glVertexAttribPointer(colorAttributeIndex, 3, GL3.GL_FLOAT, false, 0, 0);
+        gl.glVertexAttribPointer(colorAttributeIndex, 4, GL3.GL_FLOAT, false, 0, 0);
         gl.glEnableVertexAttribArray(colorAttributeIndex);
 
         return vertexArrayObjectId;
@@ -69,8 +84,11 @@ public final class OpenGLUtils {
         int programId = gl.glCreateProgram();
         gl.glAttachShader(programId, vertexShaderId);
         gl.glAttachShader(programId, fragmentShaderId);
-        gl.glBindAttribLocation(programId, positionAttributeIndex, "vertex_position");
-        gl.glBindAttribLocation(programId, colorAttributeIndex, "vertex_color");
+        //link vertex shader input variables to attribute indices.
+        gl.glBindAttribLocation(programId, positionAttributeIndex, VERTEX_POSITION);
+        gl.glBindAttribLocation(programId, colorAttributeIndex, VERTEX_COLOR);
+        //link fragment shader output variable to attribute index 0.
+        gl.glBindFragDataLocation(programId, 0, FRAGMENT_COLOR);
         linkShaders(gl, programId);
         return programId;
     }

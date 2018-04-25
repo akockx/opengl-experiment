@@ -5,26 +5,25 @@ package rasterizer;
 
 import com.jogamp.opengl.GL3;
 import com.jogamp.opengl.GLAutoDrawable;
-import com.jogamp.opengl.GLCapabilities;
 import com.jogamp.opengl.GLEventListener;
-import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.awt.GLCanvas;
 
 import static java.lang.Math.*;
 
 /**
- * Uses OpenGL 3 to draw a rainbow.
+ * Uses OpenGL 3 to draw a rainbow that follows a curved path through space.
  *
  * @author A.C. Kockx
  */
 public final class Rainbow {
-    private static final float RAINBOW_COLORS[][] = new float[][]{{1,       0, 0},
-                                                                  {1,    0.5f, 0},
-                                                                  {1,       1, 0},
-                                                                  {0,       1, 0},
-                                                                  {0,       1, 1},
-                                                                  {0,       0, 1},
-                                                                  {0.5f,    0, 1}};
+    //r, g, b, a values.
+    private static final float RAINBOW_COLORS[][] = new float[][]{{1,    0, 0, 1},
+                                                                  {1, 0.5f, 0, 1},
+                                                                  {1,    1, 0, 1},
+                                                                  {0,    1, 0, 1},
+                                                                  {0,    1, 1, 1},
+                                                                  {0,    0, 1, 1},
+                                                                  {0.5f, 0, 1, 1}};
 
     private final String vertexShaderSource;
     private final String fragmentShaderSource;
@@ -40,11 +39,8 @@ public final class Rainbow {
         fragmentShaderSource = Utils.read(loader.loadResource("fragment_shader.glsl"));
 
         //create OpenGL canvas.
-        GLProfile profile = GLProfile.get(GLProfile.GL3);
-        GLCapabilities capabilities = new GLCapabilities(profile);
-        GLCanvas canvas = new GLCanvas(capabilities);
+        GLCanvas canvas = OpenGLUtils.createGLCanvas(800, 600);
         canvas.addGLEventListener(glEventListener);
-        canvas.setSize(800, 600);
 
         //init GUI on event-dispatching thread.
         javax.swing.SwingUtilities.invokeAndWait(new Runnable() {
@@ -102,12 +98,17 @@ public final class Rainbow {
         }
 
         @Override
+        public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
+        }
+
+        @Override
         public void display(GLAutoDrawable drawable) {
             GL3 gl = drawable.getGL().getGL3();
             gl.glClear(GL3.GL_COLOR_BUFFER_BIT | GL3.GL_DEPTH_BUFFER_BIT);
 
-            //draw scene.
+            //draw rainbow.
             gl.glUseProgram(shaderProgramId);
+            //draw triangle strips.
             for (int n = 0; n < triangleStripIds.length; n++) {
                 gl.glBindVertexArray(triangleStripIds[n]);
                 gl.glDrawArrays(GL3.GL_TRIANGLE_STRIP, 0, triangleStripVertexCounts[n]);
@@ -118,35 +119,37 @@ public final class Rainbow {
         }
 
         @Override
-        public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
-        }
-
-        @Override
         public void dispose(GLAutoDrawable drawable) {
         }
     };
 
     private static float[][][] createRainbowGeometry() {
-        float rainbowLength = 2;
-        float rainbowWidth = 1;
-
         int colorCount = RAINBOW_COLORS.length;
         int stepCount = 100;
-        int dimensionCount = 3;
+        int dimensionCount = 4;
         float[][][] allVertices = new float[colorCount][stepCount][dimensionCount];
+
+        //rainbow follows a curved path through 3D space.
+        //traverse rainbow path in steps.
         for (int stepIndex = 0; stepIndex < stepCount; stepIndex++) {
-            //t ranges from 0 to 1 (both inclusive) along the rainbow path.
             float t = stepIndex/(stepCount - 1f);
 
-            float verticalOffset = (float) sin(1.3*2*PI*t)/8;
+            //parameter t ranges from 0 to 1 (both inclusive) along the rainbow path.
+            float xStep = -1 + 2*t;
+            float yStep = (float) sin(1.3*2*PI*t)/8;
+            float zStep = 0;
+
+            //traverse colors perpendicular to rainbow path at current step.
             for (int colorIndex = 0; colorIndex < colorCount; colorIndex++) {
-                //u ranges from 0 to 1 (both inclusive) along the rainbow width.
                 float u = colorIndex/(colorCount - 1f);
 
-                float x = (t - 0.5f)*rainbowLength;
-                float y = (u - 0.5f)*rainbowWidth + verticalOffset;
-                float z = 0;
-                allVertices[colorIndex][stepIndex] = new float[]{x, y, z};
+                //parameter u ranges from 0 to 1 (both inclusive) along the rainbow width.
+                float xColor = xStep;
+                float yColor = yStep - 0.5f + u;
+                float zColor = zStep;
+
+                //add vertex for current step and color.
+                allVertices[colorIndex][stepIndex] = new float[]{xColor, yColor, zColor, 1};
             }
         }
 

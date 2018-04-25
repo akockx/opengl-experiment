@@ -1,13 +1,13 @@
 #version 130
 
-in vec3 vertex_position;
-in vec3 vertex_color;
+in vec4 vertex_position;
+in vec4 vertex_color;
 
-out vec3 color;
+out vec4 color;
 
 void main() {
-    gl_Position = vec4(vertex_position, 1);
+    gl_Position = vertex_position;
 
-    //send vertex color to fragment shader.
+    //color will be sent to the fragment shader.
     color = vertex_color;
 }
