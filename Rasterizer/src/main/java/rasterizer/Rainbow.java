@@ -7,6 +7,7 @@ import com.jogamp.opengl.GL3;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.awt.GLCanvas;
+import com.jogamp.opengl.math.Matrix4;
 
 import static java.lang.Math.*;
 
@@ -53,18 +54,25 @@ public final class Rainbow {
 
     private final GLEventListener glEventListener = new GLEventListener() {
         private int shaderProgramId = -1;
+        private int mvpMatrixUniformIndex = -1;
         private int[] triangleStripIds = null;
         private int[] triangleStripVertexCounts = null;
+
+        private Matrix4 modelMatrix = null;
+        private Matrix4 viewMatrix = null;
+        private Matrix4 projectionMatrix = null;
 
         @Override
         public void init(GLAutoDrawable drawable) {
             GL3 gl = drawable.getGL().getGL3();
+            gl.glEnable(GL3.GL_DEPTH_TEST);
             gl.glClearColor(0, 0, 0, 1);
 
             //create shaders.
             int positionAttributeIndex = 0;
             int colorAttributeIndex = 1;
             shaderProgramId = OpenGLUtils.createShaderProgram(gl, vertexShaderSource, fragmentShaderSource, positionAttributeIndex, colorAttributeIndex);
+            mvpMatrixUniformIndex = gl.glGetUniformLocation(shaderProgramId, OpenGLUtils.MVP_MATRIX);
 
             //create rainbow geometry.
             float[][][] allVertices = createRainbowGeometry();
@@ -92,6 +100,10 @@ public final class Rainbow {
                 triangleStripIds[triangleStripIndex] = OpenGLUtils.createVertexArray(gl, coordinates, colors, positionAttributeIndex, colorAttributeIndex);
                 triangleStripVertexCounts[triangleStripIndex] = index/dimensionCount;
             }
+            modelMatrix = MatrixUtils.createModelMatrix(0, 0, 0, 0, 0, 0, 1, 1, 1);
+
+            //create camera.
+            viewMatrix = MatrixUtils.createViewMatrix(0, 0, 2, 0, 0, 0);
 
             int error = gl.glGetError();
             if (error != 0) System.err.println("Error during initialization: " + error);
@@ -99,6 +111,15 @@ public final class Rainbow {
 
         @Override
         public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
+            //this method is called at least once before method display is called for the first time.
+
+            //calculate aspect ratio.
+            if (width <= 0) width = 1;//to avoid divide by zero.
+            if (height <= 0) height = 1;//to avoid divide by zero.
+            float aspectRatio = width/((float) height);
+
+            //(re)initialize projection matrix.
+            projectionMatrix = MatrixUtils.createOrthographicProjectionMatrix(2, aspectRatio, 0, 1000);
         }
 
         @Override
@@ -108,6 +129,10 @@ public final class Rainbow {
 
             //draw rainbow.
             gl.glUseProgram(shaderProgramId);
+            //calculate model-view-projection matrix for rainbow.
+            Matrix4 mvpMatrix = MatrixUtils.multiply(projectionMatrix, MatrixUtils.multiply(viewMatrix, modelMatrix));
+            //set model-view-projection matrix in the "active" shader program.
+            gl.glUniformMatrix4fv(mvpMatrixUniformIndex, 1, false, mvpMatrix.getMatrix(), 0);
             //draw triangle strips.
             for (int n = 0; n < triangleStripIds.length; n++) {
                 gl.glBindVertexArray(triangleStripIds[n]);

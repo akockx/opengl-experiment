@@ -17,6 +17,7 @@ public final class OpenGLUtils {
     private static final String VERTEX_POSITION = "vertex_position";
     private static final String VERTEX_COLOR = "vertex_color";
     private static final String FRAGMENT_COLOR = "fragment_color";
+    public static final String MVP_MATRIX = "mvp_matrix";
 
     private OpenGLUtils() {
     }
