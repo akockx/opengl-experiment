@@ -18,7 +18,7 @@ import rasterizer.util.Utils;
  *
  * @author A.C. Kockx
  */
-public final class MultiColoredTriangle {
+public final class MultiColoredCube {
     //x, y, z, w model coordinates.
     private static final float[] coordinates = new float[]{ 0.5f, -0.5f, -0.5f, 1,//front face.
                                                            -0.5f, -0.5f, -0.5f, 1,
@@ -100,10 +100,10 @@ public final class MultiColoredTriangle {
     private final String fragmentShaderSource;
 
     public static void main(String[] args) throws Exception {
-        new MultiColoredTriangle();
+        new MultiColoredCube();
     }
 
-    private MultiColoredTriangle() throws Exception {
+    private MultiColoredCube() throws Exception {
         //load shader source.
         ResourceLoader loader = new ResourceLoader("/rasterizer/shaders/");
         vertexShaderSource = Utils.read(loader.loadResource("vertex_shader.glsl"));
@@ -117,7 +117,7 @@ public final class MultiColoredTriangle {
         javax.swing.SwingUtilities.invokeAndWait(new Runnable() {
             @Override
             public void run() {
-                Utils.createAndShowFrame(canvas, MultiColoredTriangle.class.getSimpleName(), false);
+                Utils.createAndShowFrame(canvas, MultiColoredCube.class.getSimpleName(), false);
             }
         });
     }
