@@ -14,20 +14,86 @@ import rasterizer.util.ResourceLoader;
 import rasterizer.util.Utils;
 
 /**
- * Uses OpenGL 3 to draw a multi-colored triangle on the screen.
+ * Uses OpenGL 3 to draw a multi-colored cube on the screen.
  *
  * @author A.C. Kockx
  */
 public final class MultiColoredTriangle {
     //x, y, z, w model coordinates.
-    private static final float[] coordinates = new float[]{-1, -1, 0, 1,
-                                                            1, -1, 0, 1,
-                                                            0,  1, 0, 1
+    private static final float[] coordinates = new float[]{ 0.5f, -0.5f, -0.5f, 1,//front face.
+                                                           -0.5f, -0.5f, -0.5f, 1,
+                                                           -0.5f,  0.5f, -0.5f, 1,
+                                                            0.5f, -0.5f, -0.5f, 1,
+                                                           -0.5f,  0.5f, -0.5f, 1,
+                                                            0.5f,  0.5f, -0.5f, 1,
+                                                           -0.5f, -0.5f,  0.5f, 1,//back face.
+                                                            0.5f, -0.5f,  0.5f, 1,
+                                                            0.5f,  0.5f,  0.5f, 1,
+                                                           -0.5f, -0.5f,  0.5f, 1,
+                                                            0.5f,  0.5f,  0.5f, 1,
+                                                           -0.5f,  0.5f,  0.5f, 1,
+                                                            0.5f, -0.5f,  0.5f, 1,//right face.
+                                                            0.5f, -0.5f, -0.5f, 1,
+                                                            0.5f,  0.5f, -0.5f, 1,
+                                                            0.5f, -0.5f,  0.5f, 1,
+                                                            0.5f,  0.5f, -0.5f, 1,
+                                                            0.5f,  0.5f,  0.5f, 1,
+                                                           -0.5f, -0.5f, -0.5f, 1,//left face.
+                                                           -0.5f, -0.5f,  0.5f, 1,
+                                                           -0.5f,  0.5f,  0.5f, 1,
+                                                           -0.5f, -0.5f, -0.5f, 1,
+                                                           -0.5f,  0.5f,  0.5f, 1,
+                                                           -0.5f,  0.5f, -0.5f, 1,
+                                                           -0.5f,  0.5f,  0.5f, 1,//top face.
+                                                            0.5f,  0.5f,  0.5f, 1,
+                                                            0.5f,  0.5f, -0.5f, 1,
+                                                           -0.5f,  0.5f,  0.5f, 1,
+                                                            0.5f,  0.5f, -0.5f, 1,
+                                                           -0.5f,  0.5f, -0.5f, 1,
+                                                           -0.5f, -0.5f, -0.5f, 1,//bottom face.
+                                                            0.5f, -0.5f, -0.5f, 1,
+                                                            0.5f, -0.5f,  0.5f, 1,
+                                                           -0.5f, -0.5f, -0.5f, 1,
+                                                            0.5f, -0.5f,  0.5f, 1,
+                                                           -0.5f, -0.5f,  0.5f, 1
     };
     //r, g, b, a values.
-    private static final float colors[] = new float[]{0, 0, 1, 1,
+    private static final float colors[] = new float[]{0, 0, 1, 1,//front face.
+                                                      0, 0, 1, 1,
+                                                      0, 0, 1, 1,
+                                                      0, 0, 1, 1,
+                                                      0, 0, 1, 1,
+                                                      0, 0, 1, 1,
+                                                      1, 1, 0, 1,//back face.
+                                                      1, 1, 0, 1,
+                                                      1, 1, 0, 1,
+                                                      1, 1, 0, 1,
+                                                      1, 1, 0, 1,
+                                                      1, 1, 0, 1,
+                                                      1, 0, 1, 1,//right face.
+                                                      1, 0, 1, 1,
+                                                      1, 0, 1, 1,
+                                                      1, 0, 1, 1,
+                                                      1, 0, 1, 1,
+                                                      1, 0, 1, 1,
+                                                      0, 1, 0, 1,//left face.
                                                       0, 1, 0, 1,
-                                                      1, 0, 0, 1
+                                                      0, 1, 0, 1,
+                                                      0, 1, 0, 1,
+                                                      0, 1, 0, 1,
+                                                      0, 1, 0, 1,
+                                                      1, 0, 0, 1,//top face.
+                                                      1, 0, 0, 1,
+                                                      1, 0, 0, 1,
+                                                      1, 0, 0, 1,
+                                                      1, 0, 0, 1,
+                                                      1, 0, 0, 1,
+                                                      0, 1, 1, 1,//bottom face.
+                                                      0, 1, 1, 1,
+                                                      0, 1, 1, 1,
+                                                      0, 1, 1, 1,
+                                                      0, 1, 1, 1,
+                                                      0, 1, 1, 1
     };
 
     private final String vertexShaderSource;
@@ -69,6 +135,10 @@ public final class MultiColoredTriangle {
         public void init(GLAutoDrawable drawable) {
             GL3 gl = drawable.getGL().getGL3();
             gl.glClearColor(0, 0, 0, 1);
+            gl.glEnable(GL3.GL_DEPTH_TEST);
+            //enable back-face culling.
+            gl.glCullFace(GL3.GL_BACK);
+            gl.glEnable(GL3.GL_CULL_FACE);
 
             //create shaders.
             int positionAttributeIndex = 0;
@@ -78,10 +148,10 @@ public final class MultiColoredTriangle {
 
             //create geometry.
             vertexArrayObjectId = OpenGLUtils.createVertexArray(gl, coordinates, colors, positionAttributeIndex, colorAttributeIndex);
-            modelMatrix = MatrixUtils.createModelMatrix(0, 0, 0, 0, 0, 0, 1, 1, 1);
+            modelMatrix = MatrixUtils.createModelMatrix(0, 0, 0, 180, 0, 0, 1, 1, 1);
 
             //create camera.
-            viewMatrix = MatrixUtils.createViewMatrix(0, 0, 4, 0, 0, 0);
+            viewMatrix = MatrixUtils.createViewMatrix(2, 1, 4, 27, -11, 0);
 
             int error = gl.glGetError();
             if (error != 0) System.err.println("Error during initialization: " + error);
@@ -95,7 +165,7 @@ public final class MultiColoredTriangle {
             float aspectRatio = width/((float) height);
 
             //(re)initialize projection matrix.
-            projectionMatrix = MatrixUtils.createPerspectiveProjectionMatrix(45, aspectRatio, 2, 1000);
+            projectionMatrix = MatrixUtils.createPerspectiveProjectionMatrix(45, aspectRatio, 1, 100);
         }
 
         @Override
@@ -103,12 +173,13 @@ public final class MultiColoredTriangle {
             GL3 gl = drawable.getGL().getGL3();
             gl.glClear(GL3.GL_COLOR_BUFFER_BIT | GL3.GL_DEPTH_BUFFER_BIT);
 
-            //draw triangle.
+            //draw cube.
             gl.glUseProgram(shaderProgramId);
             Matrix4 mvpMatrix = MatrixUtils.multiply(projectionMatrix, MatrixUtils.multiply(viewMatrix, modelMatrix));
             gl.glUniformMatrix4fv(mvpMatrixUniformIndex, 1, false, mvpMatrix.getMatrix(), 0);
             gl.glBindVertexArray(vertexArrayObjectId);
-            gl.glDrawArrays(GL3.GL_TRIANGLES, 0, 3);
+            int vertexCount = coordinates.length/4;
+            gl.glDrawArrays(GL3.GL_TRIANGLES, 0, vertexCount);
 
             int error = gl.glGetError();
             if (error != 0) System.err.println("Error during rendering: " + error);
