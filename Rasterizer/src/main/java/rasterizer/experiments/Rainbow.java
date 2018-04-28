@@ -69,8 +69,8 @@ public final class Rainbow {
         @Override
         public void init(GLAutoDrawable drawable) {
             GL3 gl = drawable.getGL().getGL3();
-            gl.glEnable(GL3.GL_DEPTH_TEST);
             gl.glClearColor(0, 0, 0, 1);
+            gl.glEnable(GL3.GL_DEPTH_TEST);
 
             //create shaders.
             int positionAttributeIndex = 0;
@@ -107,7 +107,7 @@ public final class Rainbow {
             modelMatrix = MatrixUtils.createModelMatrix(0, 0, 0, 0, 0, 0, 1, 1, 1);
 
             //create camera.
-            viewMatrix = MatrixUtils.createViewMatrix(0, 0, 2, 0, 0, 0);
+            viewMatrix = MatrixUtils.createViewMatrix(0, 0, 4, 0, 0, 0);
 
             int error = gl.glGetError();
             if (error != 0) System.err.println("Error during initialization: " + error);
@@ -123,7 +123,7 @@ public final class Rainbow {
             float aspectRatio = width/((float) height);
 
             //(re)initialize projection matrix.
-            projectionMatrix = MatrixUtils.createOrthographicProjectionMatrix(2, aspectRatio, 0, 1000);
+            projectionMatrix = MatrixUtils.createOrthographicProjectionMatrix(2, aspectRatio, 1, 100);
         }
 
         @Override

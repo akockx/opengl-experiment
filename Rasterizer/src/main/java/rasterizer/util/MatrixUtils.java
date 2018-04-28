@@ -18,19 +18,20 @@ public final class MatrixUtils {
 
     /**
      * Creates and returns a model matrix in column-major order, using the given position, orientation and scale of the model.
+     *
+     * The rotations are applied in the order:
+     * 1. yaw about y-axis.
+     * 2. roll about z'-axis.
+     * 3. pitch about x''-axis.
      */
-    public static Matrix4 createModelMatrix(float x, float y, float z, float yaw, float roll, float pitch, float xScale, float yScale, float zScale) {
+    public static Matrix4 createModelMatrix(float x, float y, float z, float yawInDegrees, float rollInDegrees, float pitchInDegrees, float xScale, float yScale, float zScale) {
         //create scaling matrix.
         Matrix4 scalingMatrix = new Matrix4();
         scalingMatrix.scale(xScale, yScale, zScale);
 
         //create rotation.
         Quaternion rotation = new Quaternion();
-        //The rotations are applied in the order:
-        //1. yaw in radians about y-axis.
-        //2. roll in radians about z'-axis.
-        //3. pitch in radians about x'-axis (not x''-axis).
-        rotation.setFromEuler(pitch, yaw, roll);
+        rotation.setFromEuler((float) Math.toRadians(pitchInDegrees), (float) Math.toRadians(yawInDegrees), (float) Math.toRadians(rollInDegrees));
 
         //create translation matrix.
         Matrix4 translationMatrix = new Matrix4();
@@ -48,19 +49,20 @@ public final class MatrixUtils {
 
     /**
      * Creates and returns a view matrix in column-major order, using the given position and orientation of the camera.
+     *
+     * The rotations are applied in the order:
+     * 1. yaw about y-axis.
+     * 2. roll about z'-axis.
+     * 3. pitch about x''-axis.
      */
-    public static Matrix4 createViewMatrix(float x, float y, float z, float yaw, float roll, float pitch) {
+    public static Matrix4 createViewMatrix(float x, float y, float z, float yawInDegrees, float rollInDegrees, float pitchInDegrees) {
         //create translation matrix.
         Matrix4 translationMatrix = new Matrix4();
         translationMatrix.translate(-x, -y, -z);
 
         //create rotation.
         Quaternion rotation = new Quaternion();
-        //The rotations are applied in the order:
-        //1. yaw in radians about y-axis.
-        //2. roll in radians about z'-axis.
-        //3. pitch in radians about x'-axis (not x''-axis).
-        rotation.setFromEuler(-pitch, -yaw, -roll);
+        rotation.setFromEuler((float) Math.toRadians(-pitchInDegrees), (float) Math.toRadians(-yawInDegrees), (float) Math.toRadians(-rollInDegrees));
 
         Matrix4 modelMatrix = new Matrix4();
         //translate.
@@ -161,7 +163,7 @@ public final class MatrixUtils {
      * Therefore the method com.jogamp.opengl.math.Matrix4.multMatrix() changes its input, which is something we don't want.
      * This method does not change the input.
      *
-         * @param a matrix A in column-major order.
+     * @param a matrix A in column-major order.
      * @param b matrix B in column-major order.
      * @return A x B in column-major order.
      */
