@@ -29,21 +29,18 @@ public final class MatrixUtils {
         Matrix4 scalingMatrix = new Matrix4();
         scalingMatrix.scale(xScale, yScale, zScale);
 
-        //create rotation.
+        //create rotation matrix.
+        Matrix4 rotationMatrix = new Matrix4();
         Quaternion rotation = new Quaternion();
         rotation.setFromEuler((float) Math.toRadians(pitchInDegrees), (float) Math.toRadians(yawInDegrees), (float) Math.toRadians(rollInDegrees));
+        rotationMatrix.rotate(rotation);
 
         //create translation matrix.
         Matrix4 translationMatrix = new Matrix4();
         translationMatrix.translate(x, y, z);
 
-        Matrix4 modelMatrix = new Matrix4();
-        //scale.
-        modelMatrix.multMatrix(scalingMatrix);
-        //rotate.
-        modelMatrix.rotate(rotation);
-        //translate.
-        modelMatrix.multMatrix(translationMatrix);
+        //first scale, then rotate, then translate.
+        Matrix4 modelMatrix = multiply(translationMatrix, multiply(rotationMatrix, scalingMatrix));
         return modelMatrix;
     }
 
@@ -60,17 +57,16 @@ public final class MatrixUtils {
         Matrix4 translationMatrix = new Matrix4();
         translationMatrix.translate(-x, -y, -z);
 
-        //create rotation.
+        //create rotation matrix.
+        Matrix4 rotationMatrix = new Matrix4();
         Quaternion rotation = new Quaternion();
         rotation.setFromEuler((float) Math.toRadians(-pitchInDegrees), (float) Math.toRadians(-yawInDegrees), (float) Math.toRadians(-rollInDegrees));
+        rotationMatrix.rotate(rotation);
 
-        Matrix4 modelMatrix = new Matrix4();
-        //translate.
-        modelMatrix.multMatrix(translationMatrix);
-        //rotate.
-        modelMatrix.rotate(rotation);
+        //first translate, then rotate.
         //Note: the scaling that would be expected here (analogous to the model matrix) is implicitly contained in the projection matrix.
-        return modelMatrix;
+        Matrix4 viewMatrix = multiply(rotationMatrix, translationMatrix);
+        return viewMatrix;
     }
 
     /**
