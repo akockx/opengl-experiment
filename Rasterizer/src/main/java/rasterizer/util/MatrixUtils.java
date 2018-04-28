@@ -5,7 +5,6 @@ package rasterizer.util;
 
 import com.jogamp.opengl.math.FloatUtil;
 import com.jogamp.opengl.math.Matrix4;
-import com.jogamp.opengl.math.Quaternion;
 
 import java.util.Arrays;
 
@@ -19,21 +18,32 @@ public final class MatrixUtils {
     /**
      * Creates and returns a model matrix in column-major order, using the given position, orientation and scale of the model.
      *
-     * The rotations are applied in the order:
-     * 1. yaw about y-axis.
-     * 2. roll about z'-axis.
-     * 3. pitch about x''-axis.
+     * By default (no translation and no rotation) the model is positioned at the origin in world space,
+     * the negative z-axis points to the front of the model, the positive x-axis points to the right side of the model
+     * and the positive y-axis points to the top of the model.
+     *
+     * The model is rotated as follows (as seen from world space):
+     * 1. yaw about positive y-axis.
+     * 2. pitch about positive x'-axis.
+     * 3. roll about negative z''-axis.
      */
-    public static Matrix4 createModelMatrix(float x, float y, float z, float yawInDegrees, float rollInDegrees, float pitchInDegrees, float xScale, float yScale, float zScale) {
+    public static Matrix4 createModelMatrix(float x, float y, float z, float yawInDegrees, float pitchInDegrees, float rollInDegrees, float xScale, float yScale, float zScale) {
         //create scaling matrix.
         Matrix4 scalingMatrix = new Matrix4();
         scalingMatrix.scale(xScale, yScale, zScale);
 
         //create rotation matrix.
-        Matrix4 rotationMatrix = new Matrix4();
-        Quaternion rotation = new Quaternion();
-        rotation.setFromEuler((float) Math.toRadians(pitchInDegrees), (float) Math.toRadians(yawInDegrees), (float) Math.toRadians(rollInDegrees));
-        rotationMatrix.rotate(rotation);
+        //roll about negative z-axis.
+        Matrix4 rollMatrix = new Matrix4();
+        rollMatrix.rotate((float) Math.toRadians(rollInDegrees), 0, 0, -1);
+        //pitch about positive x-axis.
+        Matrix4 pitchMatrix = new Matrix4();
+        pitchMatrix.rotate((float) Math.toRadians(pitchInDegrees), 1, 0, 0);
+        //yaw about positive y-axis.
+        Matrix4 yawMatrix = new Matrix4();
+        yawMatrix.rotate((float) Math.toRadians(yawInDegrees), 0, 1, 0);
+        //first roll, then pitch, then yaw.
+        Matrix4 rotationMatrix = multiply(yawMatrix, multiply(pitchMatrix, rollMatrix));
 
         //create translation matrix.
         Matrix4 translationMatrix = new Matrix4();
@@ -47,21 +57,32 @@ public final class MatrixUtils {
     /**
      * Creates and returns a view matrix in column-major order, using the given position and orientation of the camera.
      *
-     * The rotations are applied in the order:
-     * 1. yaw about y-axis.
-     * 2. roll about z'-axis.
-     * 3. pitch about x''-axis.
+     * By default (no translation and no rotation) the camera is positioned at the origin in world space,
+     * the camera looks in the direction of the negative z-axis, the positive x-axis points to the right side of the camera
+     * and the positive y-axis points to the top of the camera.
+     *
+     * The camera is rotated as follows (as seen from world space):
+     * 1. yaw about positive y-axis.
+     * 2. pitch about positive x'-axis.
+     * 3. roll about negative z''-axis.
      */
-    public static Matrix4 createViewMatrix(float x, float y, float z, float yawInDegrees, float rollInDegrees, float pitchInDegrees) {
+    public static Matrix4 createViewMatrix(float x, float y, float z, float yawInDegrees, float pitchInDegrees, float rollInDegrees) {
         //create translation matrix.
         Matrix4 translationMatrix = new Matrix4();
         translationMatrix.translate(-x, -y, -z);
 
         //create rotation matrix.
-        Matrix4 rotationMatrix = new Matrix4();
-        Quaternion rotation = new Quaternion();
-        rotation.setFromEuler((float) Math.toRadians(-pitchInDegrees), (float) Math.toRadians(-yawInDegrees), (float) Math.toRadians(-rollInDegrees));
-        rotationMatrix.rotate(rotation);
+        //yaw about positive y-axis.
+        Matrix4 yawMatrix = new Matrix4();
+        yawMatrix.rotate((float) Math.toRadians(-yawInDegrees), 0, 1, 0);
+        //pitch about positive x-axis.
+        Matrix4 pitchMatrix = new Matrix4();
+        pitchMatrix.rotate((float) Math.toRadians(-pitchInDegrees), 1, 0, 0);
+        //roll about negative z-axis.
+        Matrix4 rollMatrix = new Matrix4();
+        rollMatrix.rotate((float) Math.toRadians(-rollInDegrees), 0, 0, -1);
+        //first yaw, then pitch, then roll.
+        Matrix4 rotationMatrix = multiply(rollMatrix, multiply(pitchMatrix, yawMatrix));
 
         //first translate, then rotate.
         //Note: the scaling that would be expected here (analogous to the model matrix) is implicitly contained in the projection matrix.
