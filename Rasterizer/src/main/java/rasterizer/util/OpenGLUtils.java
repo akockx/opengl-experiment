@@ -14,10 +14,10 @@ import java.nio.FloatBuffer;
  * @author A.C. Kockx
  */
 public final class OpenGLUtils {
-    private static final String VERTEX_POSITION = "vertex_position";
-    private static final String VERTEX_COLOR = "vertex_color";
-    private static final String FRAGMENT_COLOR = "fragment_color";
     public static final String MVP_MATRIX = "mvp_matrix";
+    public static final String VERTEX_POSITION = "vertex_position";
+    public static final String VERTEX_COLOR = "vertex_color";
+    private static final String FRAGMENT_COLOR = "fragment_color";
 
     private OpenGLUtils() {
     }
@@ -50,29 +50,32 @@ public final class OpenGLUtils {
         return vertexBufferIds[0];
     }
 
-    public static int createVertexArray(GL3 gl, float[] coordinates, float[] colors, int positionAttributeIndex, int colorAttributeIndex) {
+    /**
+     * @param attributeData input data for each attribute, in the order of increasing attribute index (0, 1, 2, etc.).
+     * @return id of created vertex array object.
+     */
+    public static int createVertexArray(GL3 gl, float[][] attributeData) {
         int vertexArrayObjectId = OpenGLUtils.createVertexArrayObject(gl);
         gl.glBindVertexArray(vertexArrayObjectId);
 
-        int positionVboId = OpenGLUtils.createVertexBufferObject(gl);
-        gl.glBindBuffer(GL3.GL_ARRAY_BUFFER, positionVboId);
-        gl.glBufferData(GL3.GL_ARRAY_BUFFER, coordinates.length*Float.BYTES, FloatBuffer.wrap(coordinates), GL3.GL_STATIC_DRAW);
-        gl.glVertexAttribPointer(positionAttributeIndex, 4, GL3.GL_FLOAT, false, 0, 0);
-        gl.glEnableVertexAttribArray(positionAttributeIndex);
+        for (int attributeIndex = 0; attributeIndex < attributeData.length; attributeIndex++) {
+            float[] data = attributeData[attributeIndex];
 
-        int colorVboId = OpenGLUtils.createVertexBufferObject(gl);
-        gl.glBindBuffer(GL3.GL_ARRAY_BUFFER, colorVboId);
-        gl.glBufferData(GL3.GL_ARRAY_BUFFER, colors.length*Float.BYTES, FloatBuffer.wrap(colors), GL3.GL_STATIC_DRAW);
-        gl.glVertexAttribPointer(colorAttributeIndex, 4, GL3.GL_FLOAT, false, 0, 0);
-        gl.glEnableVertexAttribArray(colorAttributeIndex);
+            int vertexBufferObjectId = OpenGLUtils.createVertexBufferObject(gl);
+            gl.glBindBuffer(GL3.GL_ARRAY_BUFFER, vertexBufferObjectId);
+            gl.glBufferData(GL3.GL_ARRAY_BUFFER, data.length*Float.BYTES, FloatBuffer.wrap(data), GL3.GL_STATIC_DRAW);
+            gl.glVertexAttribPointer(attributeIndex, 4, GL3.GL_FLOAT, false, 0, 0);
+            gl.glEnableVertexAttribArray(attributeIndex);
+        }
 
         return vertexArrayObjectId;
     }
 
     /**
+     * @param vertexAttributeNames names of the attributes. These will be linked to attribute indices 0, 1, 2, etc. in the order in which they are given.
      * @return id of created shader program.
      */
-    public static int createShaderProgram(GL3 gl, String vertexShaderSource, String fragmentShaderSource, int positionAttributeIndex, int colorAttributeIndex) {
+    public static int createShaderProgram(GL3 gl, String vertexShaderSource, String fragmentShaderSource, String[] vertexAttributeNames) {
         //create shaders.
         int vertexShaderId = createShader(gl, GL3.GL_VERTEX_SHADER, vertexShaderSource);
         int fragmentShaderId = createShader(gl, GL3.GL_FRAGMENT_SHADER, fragmentShaderSource);
@@ -86,11 +89,13 @@ public final class OpenGLUtils {
         gl.glAttachShader(programId, vertexShaderId);
         gl.glAttachShader(programId, fragmentShaderId);
         //link vertex shader input variables to attribute indices.
-        gl.glBindAttribLocation(programId, positionAttributeIndex, VERTEX_POSITION);
-        gl.glBindAttribLocation(programId, colorAttributeIndex, VERTEX_COLOR);
-        //link fragment shader output variable to attribute index 0.
+        for (int attributeIndex = 0; attributeIndex < vertexAttributeNames.length; attributeIndex++) {
+            gl.glBindAttribLocation(programId, attributeIndex, vertexAttributeNames[attributeIndex]);
+        }
+        //link fragment shader output variable to data index 0.
         gl.glBindFragDataLocation(programId, 0, FRAGMENT_COLOR);
         linkShaders(gl, programId);
+
         return programId;
     }
 

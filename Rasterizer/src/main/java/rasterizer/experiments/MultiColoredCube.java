@@ -136,18 +136,18 @@ public final class MultiColoredCube {
             GL3 gl = drawable.getGL().getGL3();
             gl.glClearColor(0, 0, 0, 1);
             gl.glEnable(GL3.GL_DEPTH_TEST);
+
             //enable back-face culling.
-            gl.glCullFace(GL3.GL_BACK);
             gl.glEnable(GL3.GL_CULL_FACE);
+            gl.glCullFace(GL3.GL_BACK);
 
             //create shaders.
-            int positionAttributeIndex = 0;
-            int colorAttributeIndex = 1;
-            shaderProgramId = OpenGLUtils.createShaderProgram(gl, vertexShaderSource, fragmentShaderSource, positionAttributeIndex, colorAttributeIndex);
+            shaderProgramId = OpenGLUtils.createShaderProgram(gl, vertexShaderSource, fragmentShaderSource,
+                    new String[]{OpenGLUtils.VERTEX_POSITION, OpenGLUtils.VERTEX_COLOR});
             mvpMatrixUniformIndex = gl.glGetUniformLocation(shaderProgramId, OpenGLUtils.MVP_MATRIX);
 
             //create geometry.
-            vertexArrayObjectId = OpenGLUtils.createVertexArray(gl, coordinates, colors, positionAttributeIndex, colorAttributeIndex);
+            vertexArrayObjectId = OpenGLUtils.createVertexArray(gl, new float[][]{coordinates, colors});
             modelMatrix = MatrixUtils.createModelMatrix(0, 0, 0, 180, 0, 0, 1, 1, 1);
 
             //create camera.

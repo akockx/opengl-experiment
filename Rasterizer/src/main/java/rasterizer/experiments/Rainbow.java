@@ -73,9 +73,8 @@ public final class Rainbow {
             gl.glEnable(GL3.GL_DEPTH_TEST);
 
             //create shaders.
-            int positionAttributeIndex = 0;
-            int colorAttributeIndex = 1;
-            shaderProgramId = OpenGLUtils.createShaderProgram(gl, vertexShaderSource, fragmentShaderSource, positionAttributeIndex, colorAttributeIndex);
+            shaderProgramId = OpenGLUtils.createShaderProgram(gl, vertexShaderSource, fragmentShaderSource,
+                    new String[]{OpenGLUtils.VERTEX_POSITION, OpenGLUtils.VERTEX_COLOR});
             mvpMatrixUniformIndex = gl.glGetUniformLocation(shaderProgramId, OpenGLUtils.MVP_MATRIX);
 
             //create rainbow geometry.
@@ -101,7 +100,7 @@ public final class Rainbow {
                         index++;
                     }
                 }
-                triangleStripIds[triangleStripIndex] = OpenGLUtils.createVertexArray(gl, coordinates, colors, positionAttributeIndex, colorAttributeIndex);
+                triangleStripIds[triangleStripIndex] = OpenGLUtils.createVertexArray(gl, new float[][]{coordinates, colors});
                 triangleStripVertexCounts[triangleStripIndex] = index/dimensionCount;
             }
             modelMatrix = MatrixUtils.createModelMatrix(0, 0, 0, 0, 0, 0, 1, 1, 1);
