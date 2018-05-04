@@ -23,45 +23,31 @@ public final class MultiColoredCube {
     //vertex coordinates (x, y, z) in model space.
     private static final float[] coordinates = new float[]{ 0.5f, -0.5f, -0.5f,//front face.
                                                            -0.5f, -0.5f, -0.5f,
-                                                           -0.5f,  0.5f, -0.5f,
-                                                            0.5f, -0.5f, -0.5f,
-                                                           -0.5f,  0.5f, -0.5f,
                                                             0.5f,  0.5f, -0.5f,
+                                                           -0.5f,  0.5f, -0.5f,
                                                            -0.5f, -0.5f,  0.5f,//back face.
                                                             0.5f, -0.5f,  0.5f,
-                                                            0.5f,  0.5f,  0.5f,
-                                                           -0.5f, -0.5f,  0.5f,
-                                                            0.5f,  0.5f,  0.5f,
                                                            -0.5f,  0.5f,  0.5f,
+                                                            0.5f,  0.5f,  0.5f,
                                                             0.5f, -0.5f,  0.5f,//right face.
                                                             0.5f, -0.5f, -0.5f,
-                                                            0.5f,  0.5f, -0.5f,
-                                                            0.5f, -0.5f,  0.5f,
-                                                            0.5f,  0.5f, -0.5f,
                                                             0.5f,  0.5f,  0.5f,
+                                                            0.5f,  0.5f, -0.5f,
                                                            -0.5f, -0.5f, -0.5f,//left face.
                                                            -0.5f, -0.5f,  0.5f,
-                                                           -0.5f,  0.5f,  0.5f,
-                                                           -0.5f, -0.5f, -0.5f,
-                                                           -0.5f,  0.5f,  0.5f,
                                                            -0.5f,  0.5f, -0.5f,
+                                                           -0.5f,  0.5f,  0.5f,
                                                            -0.5f,  0.5f,  0.5f,//top face.
                                                             0.5f,  0.5f,  0.5f,
-                                                            0.5f,  0.5f, -0.5f,
-                                                           -0.5f,  0.5f,  0.5f,
-                                                            0.5f,  0.5f, -0.5f,
                                                            -0.5f,  0.5f, -0.5f,
+                                                            0.5f,  0.5f, -0.5f,
                                                            -0.5f, -0.5f, -0.5f,//bottom face.
                                                             0.5f, -0.5f, -0.5f,
-                                                            0.5f, -0.5f,  0.5f,
-                                                           -0.5f, -0.5f, -0.5f,
-                                                            0.5f, -0.5f,  0.5f,
-                                                           -0.5f, -0.5f,  0.5f
+                                                           -0.5f, -0.5f,  0.5f,
+                                                            0.5f, -0.5f,  0.5f
     };
     //vertex normal vectors (x, y, z) in model space.
     private static final float normalVectors[] = new float[]{ 0,  0, -1,//front face.
-                                                              0,  0, -1,
-                                                              0,  0, -1,
                                                               0,  0, -1,
                                                               0,  0, -1,
                                                               0,  0, -1,
@@ -69,11 +55,7 @@ public final class MultiColoredCube {
                                                               0,  0,  1,
                                                               0,  0,  1,
                                                               0,  0,  1,
-                                                              0,  0,  1,
-                                                              0,  0,  1,
                                                               1,  0,  0,//right face.
-                                                              1,  0,  0,
-                                                              1,  0,  0,
                                                               1,  0,  0,
                                                               1,  0,  0,
                                                               1,  0,  0,
@@ -81,17 +63,11 @@ public final class MultiColoredCube {
                                                              -1,  0,  0,
                                                              -1,  0,  0,
                                                              -1,  0,  0,
-                                                             -1,  0,  0,
-                                                             -1,  0,  0,
                                                               0,  1,  0,//top face.
                                                               0,  1,  0,
                                                               0,  1,  0,
                                                               0,  1,  0,
-                                                              0,  1,  0,
-                                                              0,  1,  0,
                                                               0, -1,  0,//bottom face.
-                                                              0, -1,  0,
-                                                              0, -1,  0,
                                                               0, -1,  0,
                                                               0, -1,  0,
                                                               0, -1,  0
@@ -101,11 +77,7 @@ public final class MultiColoredCube {
                                                       0, 0, 1,
                                                       0, 0, 1,
                                                       0, 0, 1,
-                                                      0, 0, 1,
-                                                      0, 0, 1,
                                                       1, 1, 0,//back face.
-                                                      1, 1, 0,
-                                                      1, 1, 0,
                                                       1, 1, 0,
                                                       1, 1, 0,
                                                       1, 1, 0,
@@ -113,11 +85,7 @@ public final class MultiColoredCube {
                                                       1, 0, 1,
                                                       1, 0, 1,
                                                       1, 0, 1,
-                                                      1, 0, 1,
-                                                      1, 0, 1,
                                                       0, 1, 0,//left face.
-                                                      0, 1, 0,
-                                                      0, 1, 0,
                                                       0, 1, 0,
                                                       0, 1, 0,
                                                       0, 1, 0,
@@ -125,11 +93,7 @@ public final class MultiColoredCube {
                                                       1, 0, 0,
                                                       1, 0, 0,
                                                       1, 0, 0,
-                                                      1, 0, 0,
-                                                      1, 0, 0,
                                                       0, 1, 1,//bottom face.
-                                                      0, 1, 1,
-                                                      0, 1, 1,
                                                       0, 1, 1,
                                                       0, 1, 1,
                                                       0, 1, 1
@@ -241,8 +205,9 @@ public final class MultiColoredCube {
             gl.glUniformMatrix4fv(modelViewProjectionMatrixUniformIndex, 1, false, modelViewProjectionMatrix.getMatrix(), 0);
             //draw vertices.
             gl.glBindVertexArray(vertexArrayObjectId);
-            int vertexCount = coordinates.length/dimensionCount;
-            gl.glDrawArrays(GL3.GL_TRIANGLES, 0, vertexCount);
+            for (int face = 0; face < 6; face++) {
+                gl.glDrawArrays(GL3.GL_TRIANGLE_STRIP, face*4, 4);
+            }
 
             int error = gl.glGetError();
             if (error != 0) System.err.println("Error during rendering: " + error);
