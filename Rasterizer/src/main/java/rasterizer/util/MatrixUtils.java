@@ -189,4 +189,15 @@ public final class MatrixUtils {
         FloatUtil.multMatrix(a.getMatrix(), b.getMatrix(), result.getMatrix());
         return result;
     }
+
+    /**
+     * @param matrix A in column-major order.
+     * @param vector column-vector v.
+     * @return column-vector A x v.
+     */
+    public static float[] multiply(Matrix4 matrix, float[] vector) {
+        float[] result = new float[4];
+        matrix.multVec(vector, result);
+        return result;
+    }
 }

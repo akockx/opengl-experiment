@@ -21,7 +21,7 @@ import static java.lang.Math.*;
  * @author A.C. Kockx
  */
 public final class Rainbow {
-    //r, g, b, a values.
+    //colors of the rainbow (r, g, b, a).
     private static final float RAINBOW_COLORS[][] = new float[][]{{1,    0, 0, 1},
                                                                   {1, 0.5f, 0, 1},
                                                                   {1,    1, 0, 1},
@@ -40,8 +40,8 @@ public final class Rainbow {
     private Rainbow() throws Exception {
         //load shader source.
         ResourceLoader loader = new ResourceLoader("/rasterizer/shaders/");
-        vertexShaderSource = Utils.read(loader.loadResource("vertex_shader.glsl"));
-        fragmentShaderSource = Utils.read(loader.loadResource("fragment_shader.glsl"));
+        vertexShaderSource = Utils.read(loader.loadResource("color_interpolation_vertex_shader.glsl"));
+        fragmentShaderSource = Utils.read(loader.loadResource("color_interpolation_fragment_shader.glsl"));
 
         //create OpenGL canvas.
         GLCanvas canvas = OpenGLUtils.createGLCanvas(800, 600);
@@ -75,7 +75,7 @@ public final class Rainbow {
             //create shaders.
             shaderProgramId = OpenGLUtils.createShaderProgram(gl, vertexShaderSource, fragmentShaderSource,
                     new String[]{OpenGLUtils.VERTEX_POSITION, OpenGLUtils.VERTEX_COLOR});
-            mvpMatrixUniformIndex = gl.glGetUniformLocation(shaderProgramId, OpenGLUtils.MVP_MATRIX);
+            mvpMatrixUniformIndex = gl.glGetUniformLocation(shaderProgramId, OpenGLUtils.MODEL_VIEW_PROJECTION_MATRIX);
 
             //create rainbow geometry.
             float[][][] allVertices = createRainbowGeometry();
@@ -100,7 +100,8 @@ public final class Rainbow {
                         index++;
                     }
                 }
-                triangleStripIds[triangleStripIndex] = OpenGLUtils.createVertexArray(gl, new float[][]{coordinates, colors});
+                triangleStripIds[triangleStripIndex] = OpenGLUtils.createVertexArray(gl,
+                        new int[]{dimensionCount, dimensionCount}, new float[][]{coordinates, colors});
                 triangleStripVertexCounts[triangleStripIndex] = index/dimensionCount;
             }
             modelMatrix = MatrixUtils.createModelMatrix(0, 0, 0, 0, 0, 0, 1, 1, 1);
