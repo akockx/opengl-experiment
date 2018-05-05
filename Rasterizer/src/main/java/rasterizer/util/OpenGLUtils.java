@@ -20,6 +20,7 @@ public final class OpenGLUtils {
     public static final String VERTEX_NORMAL = "vertexNormal";
     public static final String VERTEX_COLOR = "vertexColor";
     public static final String VERTEX_UV_COORDINATES = "vertexUVCoordinates";
+    public static final String TEXTURE_MATRIX = "textureMatrix";
     public static final String LIGHT_POSITION = "lightPosition";
     public static final String LIGHT_INTENSITY = "lightIntensity";
     public static final String AMBIENT_LIGHT_INTENSITY = "ambientLightIntensity";
