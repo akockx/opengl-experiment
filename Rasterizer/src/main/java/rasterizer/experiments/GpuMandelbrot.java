@@ -143,7 +143,7 @@ public final class GpuMandelbrot {
             String vertexShaderSource;
             String fragmentShaderSource;
             try {
-                vertexShaderSource = Utils.read(loader.loadResource("texture_vertex_shader.glsl"));
+                vertexShaderSource = Utils.read(loader.loadResource("uv_vertex_shader.glsl"));
                 fragmentShaderSource = Utils.read(loader.loadResource("mandelbrot_fragment_shader.glsl"));
             } catch (Exception e) {
                 throw new RuntimeException("Error while loading shader source: " + e.getMessage(), e);

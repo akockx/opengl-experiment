@@ -1,7 +1,7 @@
 #version 130
 
 uniform mat4 modelViewProjectionMatrix;
-uniform mat3 textureMatrix;
+uniform mat3 textureMatrix = mat3(1);//identity matrix by default.
 
 in vec3 vertexPosition;
 in vec2 vertexUVCoordinates;
