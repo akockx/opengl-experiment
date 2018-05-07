@@ -13,8 +13,7 @@ import rasterizer.util.Utils;
 import java.nio.FloatBuffer;
 
 /**
- * This class uses the minimum amount of code required to draw a single triangle on the screen
- * using OpenGL 3 and the JOGL (Java OpenGL) framework.
+ * This class uses a minimal amount of code to draw a single triangle on the screen using OpenGL 3.
  * Comments have been added to explain every step.
  * To keep this class as simple as possible, all coordinates are normalized device coordinates,
  * therefore no model, view or projection matrices are needed in this class.

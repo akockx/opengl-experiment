@@ -19,9 +19,9 @@ import rasterizer.util.Utils;
  * @author A.C. Kockx
  */
 public final class MultiColoredCube {
-    private static final int dimensionCount = 3;
+    private final int dimensionCount = 3;
     //vertex coordinates (x, y, z) in model space.
-    private static final float[] coordinates = new float[]{ 0.5f, -0.5f, -0.5f,//front face.
+    private final float[] coordinates = new float[]{ 0.5f, -0.5f, -0.5f,//front face.
                                                            -0.5f, -0.5f, -0.5f,
                                                             0.5f,  0.5f, -0.5f,
                                                            -0.5f,  0.5f, -0.5f,
@@ -47,7 +47,7 @@ public final class MultiColoredCube {
                                                             0.5f, -0.5f,  0.5f
     };
     //vertex normal vectors (x, y, z) in model space.
-    private static final float normalVectors[] = new float[]{ 0,  0, -1,//front face.
+    private final float normalVectors[] = new float[]{ 0,  0, -1,//front face.
                                                               0,  0, -1,
                                                               0,  0, -1,
                                                               0,  0, -1,
@@ -73,7 +73,7 @@ public final class MultiColoredCube {
                                                               0, -1,  0
     };
     //vertex colors (r, g, b).
-    private static final float colors[] = new float[]{0, 0, 1,//front face.
+    private final float colors[] = new float[]{0, 0, 1,//front face.
                                                       0, 0, 1,
                                                       0, 0, 1,
                                                       0, 0, 1,
@@ -98,15 +98,15 @@ public final class MultiColoredCube {
                                                       0, 1, 1,
                                                       0, 1, 1
     };
-    float specularReflectionCoefficient = 0;
-    float shininess = 5;
+    private final float specularReflectionCoefficient = 0;
+    private final float shininess = 5;
 
     //light source position (x, y, z, w) in world space.
-    float[] lightPosition = new float[]{2, 2, 4, 1};
+    private final float[] lightPosition = new float[]{2, 2, 4, 1};
     //light source intensity per color component (r, g, b).
-    private static final float[] lightIntensity = new float[]{25, 25, 25};
+    private final float[] lightIntensity = new float[]{25, 25, 25};
     //ambient light intensity per color component (r, g, b).
-    float[] ambientLightIntensity = new float[]{0, 0, 0};
+    private final float[] ambientLightIntensity = new float[]{0, 0, 0};
 
     private final String vertexShaderSource;
     private final String fragmentShaderSource;

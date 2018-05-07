@@ -121,12 +121,6 @@ public final class MatrixUtils {
      * The center of projection is at the origin in camera space.
      * The image plane of the camera is at z = -zNear in camera space.
      *
-     * Here the perspective projection matrix is created by combining two transformations in this order:
-     * 1. an orthographic projection, which transforms from camera space to clipping space.
-     * 2. preparation for perspective division (takes place in clipping space).
-     * The standard approach seems to do this the other way around, in which case preparation for perspective division
-     * takes place in camera space. However this approach gives the same results.
-     *
      * @param fieldOfViewInDegrees in the y direction in camera space.
      * @param aspectRatio = cameraWidth/cameraHeight.
      * @param zNear the negative value of the z coordinate of the near clipping plane in camera space.
@@ -139,38 +133,9 @@ public final class MatrixUtils {
         if (zNear <= 0) throw new IllegalArgumentException("zNear <= 0");
         if (zFar <= zNear) throw new IllegalArgumentException("zFar <= zNear");
 
-        //create matrix to transform from camera space to clipping space.
-        float cameraHeight = 2*zNear*(float) Math.tan(Math.toRadians(fieldOfViewInDegrees/2));
-        Matrix4 orthographicProjectionMatrix = MatrixUtils.createOrthographicProjectionMatrix(cameraHeight, aspectRatio, zNear, zFar);
-
-        //the center of projection is at the origin in camera space.
-        float[] centerOfProjection = new float[]{0, 0, 0, 1};
-        //transform center of projection to clipping space.
-        float[] temp = new float[4];
-        orthographicProjectionMatrix.multVec(centerOfProjection, temp);
-        centerOfProjection = temp;
-        float zCenterOfProjection = centerOfProjection[2];
-        //image plane is z = -1 in clipping space.
-        float zImagePlane = -1;
-
-        //create matrix that takes care of preparation for perspective division.
-        //OpenGL will divide all x, y, and z coordinates by their corresponding w values. This division is done by OpenGL in a later stage.
-        //Here only need to create a matrix that calculates the w values that will be used later by OpenGL.
-        float[] matrix = new float[16];//in column-major order.
-        Arrays.fill(matrix, 0);
-        matrix[0] = 1;
-        matrix[5] = 1;
-        matrix[10] = 1;
-        //using ratio of similar triangles in clipping space, we get:
-        //xImage/(zImagePlane - zCenterOfProjection) = x/(z - zCenterOfProjection)
-        //=> xImage = x * (zImagePlane - zCenterOfProjection)/(z - zCenterOfProjection) = x / w
-        //=> w = (z - zCenterOfProjection)/(zImagePlane - zCenterOfProjection) = z/(zImagePlane - zCenterOfProjection) - zCenterOfProjection/(zImagePlane - zCenterOfProjection)
-        matrix[11] = 1/(zImagePlane - zCenterOfProjection);
-        matrix[15] = -zCenterOfProjection/(zImagePlane - zCenterOfProjection);
-        Matrix4 preparationMatrix = new Matrix4();
-        preparationMatrix.multMatrix(matrix);
-
-        return multiply(preparationMatrix, orthographicProjectionMatrix);
+        Matrix4 projectionMatrix = new Matrix4();
+        projectionMatrix.makePerspective((float) Math.toRadians(fieldOfViewInDegrees), aspectRatio, zNear, zFar);
+        return projectionMatrix;
     }
 
     /**
