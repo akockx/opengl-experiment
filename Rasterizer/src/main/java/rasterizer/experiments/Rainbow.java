@@ -25,14 +25,14 @@ import static java.lang.Math.*;
  */
 public final class Rainbow {
     //colors of the rainbow (r, g, b).
-    private static final float RAINBOW_COLORS[] = new float[]{1,    0, 0,
-                                                              1, 0.5f, 0,
-                                                              1,    1, 0,
-                                                              0,    1, 0,
-                                                              0,    1, 1,
-                                                              0,    0, 1,
-                                                              0.5f, 0, 1};
-    private static final float COLOR_LOCATIONS[] = new float[]{0, 1/6f, 2/6f, 3/6f, 4/6f, 5/6f, 1};
+    private final float rainbowColors[] = new float[]{1,    0, 0,
+                                                      1, 0.5f, 0,
+                                                      1,    1, 0,
+                                                      0,    1, 0,
+                                                      0,    1, 1,
+                                                      0,    0, 1,
+                                                      0.5f, 0, 1};
+    private final float colorLocations[] = new float[]{0, 1/6f, 2/6f, 3/6f, 4/6f, 5/6f, 1};
 
     private final int dimensionCount = 3;
     private final String vertexShaderSource;
@@ -78,16 +78,17 @@ public final class Rainbow {
             gl.glEnable(GL3.GL_DEPTH_TEST);
 
             //create shaders.
-            shaderProgramId = OpenGLUtils.createShaderProgram(gl, vertexShaderSource, fragmentShaderSource,
+            shaderProgramId = OpenGLUtils.createShaderProgram(gl,
+                    new int[]{GL3.GL_VERTEX_SHADER, GL3.GL_FRAGMENT_SHADER}, new String[]{vertexShaderSource, fragmentShaderSource},
                     new String[]{OpenGLUtils.VERTEX_POSITION, OpenGLUtils.VERTEX_UV_COORDINATES});
             mvpMatrixUniformIndex = gl.glGetUniformLocation(shaderProgramId, OpenGLUtils.MODEL_VIEW_PROJECTION_MATRIX);
             int gradientColorsUniformIndex = gl.glGetUniformLocation(shaderProgramId, "gradientColors");
             int locationsUniformIndex = gl.glGetUniformLocation(shaderProgramId, "locations");
             int colorCountUniformIndex = gl.glGetUniformLocation(shaderProgramId, "colorCount");
             gl.glUseProgram(shaderProgramId);
-            int colorCount = COLOR_LOCATIONS.length;
-            gl.glUniform3fv(gradientColorsUniformIndex, colorCount, RAINBOW_COLORS, 0);
-            gl.glUniform1fv(locationsUniformIndex, colorCount, COLOR_LOCATIONS, 0);
+            int colorCount = colorLocations.length;
+            gl.glUniform3fv(gradientColorsUniformIndex, colorCount, rainbowColors, 0);
+            gl.glUniform1fv(locationsUniformIndex, colorCount, colorLocations, 0);
             gl.glUniform1i(colorCountUniformIndex, colorCount);
 
             //create rainbow curve.

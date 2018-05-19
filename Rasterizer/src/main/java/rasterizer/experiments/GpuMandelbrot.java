@@ -148,12 +148,13 @@ public final class GpuMandelbrot {
             } catch (Exception e) {
                 throw new RuntimeException("Error while loading shader source: " + e.getMessage(), e);
             }
-            shaderId = OpenGLUtils.createShaderProgram(gl, vertexShaderSource, fragmentShaderSource,
+            shaderId = OpenGLUtils.createShaderProgram(gl,
+                    new int[]{GL3.GL_VERTEX_SHADER, GL3.GL_FRAGMENT_SHADER}, new String[]{vertexShaderSource, fragmentShaderSource},
                     new String[]{OpenGLUtils.VERTEX_POSITION, OpenGLUtils.VERTEX_UV_COORDINATES});
             mvpMatrixUniformIndex = gl.glGetUniformLocation(shaderId, OpenGLUtils.MODEL_VIEW_PROJECTION_MATRIX);
             textureMatrixUniformIndex = gl.glGetUniformLocation(shaderId, OpenGLUtils.TEXTURE_MATRIX);
 
-            //create geometry (a quad that fills the entire screen).
+            //create geometry (a quad that spans the entire screen).
             quadId = OpenGLUtils.createVertexArray(gl, new int[]{3, 2}, new float[][]{vertexCoordinates, vertexUVCoordinates});
 
             int error = gl.glGetError();

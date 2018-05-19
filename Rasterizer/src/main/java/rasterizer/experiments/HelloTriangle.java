@@ -32,8 +32,8 @@ public final class HelloTriangle {
     //hard-coded source code for a pixel shader that colors everything red.
     private static final String fragmentShaderSourceCode = "#version 130\n"
                                                            + "out vec4 outputColor;\n"
-                                                           + "void main() {"
-                                                           + "    outputColor = vec4(1, 0, 0, 1);"
+                                                           + "void main() {\n"
+                                                           + "    outputColor = vec4(1, 0, 0, 1);\n"
                                                            + "}\n";
 
     public static void main(String[] args) throws Exception {
@@ -66,6 +66,9 @@ public final class HelloTriangle {
 
             //set clear color to dark blue.
             gl.glClearColor(0, 0, 0.5f, 1);
+
+            //uncomment this line to draw in wireframe mode.
+            //gl.glPolygonMode(GL3.GL_FRONT_AND_BACK, GL3.GL_LINE);
 
             //create and compile fragment shader (pixel shader).
             int fragmentShaderId = OpenGLUtils.createShader(gl, GL3.GL_FRAGMENT_SHADER, fragmentShaderSourceCode);

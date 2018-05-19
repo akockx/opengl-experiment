@@ -88,19 +88,21 @@ public final class OpenGLUtils {
      * @param vertexAttributeNames names of the attributes. These will be linked to attribute indices 0, 1, 2, etc. in the order in which they are given.
      * @return id of created shader program.
      */
-    public static int createShaderProgram(GL3 gl, String vertexShaderSource, String fragmentShaderSource, String[] vertexAttributeNames) {
-        //create shaders.
-        int vertexShaderId = createShader(gl, GL3.GL_VERTEX_SHADER, vertexShaderSource);
-        int fragmentShaderId = createShader(gl, GL3.GL_FRAGMENT_SHADER, fragmentShaderSource);
+    public static int createShaderProgram(GL3 gl, int[] shaderTypes, String[] shaderSources, String[] vertexAttributeNames) {
+        if (shaderTypes.length != shaderSources.length) throw new IllegalArgumentException("shaderTypes.length != shaderSources.length");
 
-        //compile shaders.
-        compileShader(gl, vertexShaderId);
-        compileShader(gl, fragmentShaderId);
+        //create and compile shaders.
+        int[] shaderIds = new int[shaderTypes.length];
+        for (int n = 0; n < shaderTypes.length; n++) {
+            shaderIds[n] = createShader(gl, shaderTypes[n], shaderSources[n]);
+            compileShader(gl, shaderIds[n]);
+        }
 
         //link shaders into a shader program.
         int programId = gl.glCreateProgram();
-        gl.glAttachShader(programId, vertexShaderId);
-        gl.glAttachShader(programId, fragmentShaderId);
+        for (int shaderId : shaderIds) {
+            gl.glAttachShader(programId, shaderId);
+        }
         //link vertex shader input variables to attribute indices.
         for (int attributeIndex = 0; attributeIndex < vertexAttributeNames.length; attributeIndex++) {
             gl.glBindAttribLocation(programId, attributeIndex, vertexAttributeNames[attributeIndex]);
@@ -135,9 +137,12 @@ public final class OpenGLUtils {
 
     public static void linkShaders(GL3 gl, int shaderProgramId) {
         gl.glLinkProgram(shaderProgramId);
-
         int linkStatus = getShaderProgramParameter(gl, shaderProgramId, GL3.GL_LINK_STATUS);
         if (linkStatus != 1) System.err.println("Shader program " + shaderProgramId + " link status: " + linkStatus);
+
+        gl.glValidateProgram(shaderProgramId);
+        int validateStatus = getShaderProgramParameter(gl, shaderProgramId, GL3.GL_VALIDATE_STATUS);
+        if (validateStatus != 1) System.err.println("Shader program " + shaderProgramId + " validate status: " + validateStatus);
 
         String error = getShaderProgramInfoLog(gl, shaderProgramId);
         if (error != null) System.err.println("Shader program " + shaderProgramId + " error: " + error);

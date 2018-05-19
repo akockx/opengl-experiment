@@ -15,6 +15,8 @@ import rasterizer.util.Utils;
 
 /**
  * Uses OpenGL 3 to draw a multi-colored cube on the screen.
+ * The cube is lit by a single point light and is shaded using an implementation
+ * of Phong shading, see https://en.wikipedia.org/wiki/Phong_shading
  *
  * @author A.C. Kockx
  */
@@ -154,7 +156,8 @@ public final class MultiColoredCube {
             gl.glCullFace(GL3.GL_BACK);
 
             //create material.
-            shaderProgramId = OpenGLUtils.createShaderProgram(gl, vertexShaderSource, fragmentShaderSource,
+            shaderProgramId = OpenGLUtils.createShaderProgram(gl,
+                    new int[]{GL3.GL_VERTEX_SHADER, GL3.GL_FRAGMENT_SHADER}, new String[]{vertexShaderSource, fragmentShaderSource},
                     new String[]{OpenGLUtils.VERTEX_POSITION, OpenGLUtils.VERTEX_NORMAL, OpenGLUtils.VERTEX_COLOR});
             modelViewProjectionMatrixUniformIndex = gl.glGetUniformLocation(shaderProgramId, OpenGLUtils.MODEL_VIEW_PROJECTION_MATRIX);
             modelViewMatrixUniformIndex = gl.glGetUniformLocation(shaderProgramId, OpenGLUtils.MODEL_VIEW_MATRIX);

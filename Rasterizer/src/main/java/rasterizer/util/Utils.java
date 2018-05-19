@@ -9,6 +9,7 @@ import javax.swing.WindowConstants;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.GraphicsEnvironment;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.BufferedReader;
@@ -38,18 +39,10 @@ public final class Utils {
         frame.setContentPane(panel);
 
         //exit when escape key is pressed.
-        KeyListener keyListener = new KeyListener() {
+        KeyListener keyListener = new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_ESCAPE) System.exit(0);
-            }
-
-            @Override
-            public void keyReleased(KeyEvent e) {
-            }
-
-            @Override
-            public void keyTyped(KeyEvent e) {
             }
         };
         content.addKeyListener(keyListener);
