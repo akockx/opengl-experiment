@@ -70,7 +70,8 @@ public final class GpuMandelbrot {
             @Override
             public void run() {
                 JFrame frame = Utils.createAndShowFrame(glCanvas, GpuMandelbrot.class.getSimpleName(), false);
-                frame.addKeyListener(keyListener);
+                glCanvas.addKeyListener(keyListener);
+                glCanvas.requestFocus();
             }
         });
 

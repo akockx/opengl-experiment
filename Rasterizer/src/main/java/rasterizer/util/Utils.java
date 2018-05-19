@@ -3,15 +3,16 @@
  */
 package rasterizer.util;
 
+import javax.swing.AbstractAction;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.KeyStroke;
 import javax.swing.WindowConstants;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.GraphicsEnvironment;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.event.ActionEvent;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -32,22 +33,19 @@ public final class Utils {
         //create contentPane.
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(content, BorderLayout.CENTER);
+        //exit when escape key is pressed.
+        panel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ESCAPE"), "escape");
+        panel.getActionMap().put("escape", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.exit(0);
+            }
+        });
 
         //create frame.
         JFrame frame = new JFrame(title);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setContentPane(panel);
-
-        //exit when escape key is pressed.
-        KeyListener keyListener = new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_ESCAPE) System.exit(0);
-            }
-        };
-        content.addKeyListener(keyListener);
-        panel.addKeyListener(keyListener);
-        frame.addKeyListener(keyListener);
 
         //display frame.
         if (fullScreen) {
