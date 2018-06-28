@@ -32,9 +32,9 @@ public final class Utils {
      * @return the created frame.
      */
     public static JFrame createAndShowFrame(Component content, String title, boolean fullScreen) {
+        //create contentPane that centers its content and listens to the escape key.
         JPanel contentPane = new JPanel(new BorderLayout());
         contentPane.add(content, BorderLayout.CENTER);
-
         //exit when escape key is pressed.
         contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(ESCAPE_KEY_STROKE_STRING), ESCAPE_KEY_STROKE_STRING);
         contentPane.getActionMap().put(ESCAPE_KEY_STROKE_STRING, new AbstractAction() {
