@@ -4,7 +4,7 @@
 apply plugin: 'java'
 apply plugin: 'application'
 
-mainClassName='rasterizer.experiments.GpuMandelbrot'
+mainClassName='rasterizer.experiments.MultiColoredCube'
 
 repositories {
     jcenter()

@@ -17,8 +17,18 @@ Java SDK 8 (or higher) and Gradle need to be installed on your system. The code 
 Build
 -----
 
-In order to build and run the experiment, clone the repository and run the following command on the command line in the folder that contains the file "settings.gradle":
+In order to build and run the MultiColoredCube experiment, clone the repository and run the following command on the command line in the folder that contains the file "settings.gradle":
 
 ```
 gradle run
 ```
+
+
+
+Experiments
+-----------
+
+* MultiColoredCube: Uses OpenGL 3 to draw a multi-colored cube on the screen. The cube is lit by a single point light and is shaded using an implementation of Phong shading.
+* GpuMandelbrot: Draws the Mandelbrot set on the screen using OpenGL 3. All calculations are performed by the GPU using a fragment shader.
+* Rainbow: Uses OpenGL 3 to draw a rainbow that follows a curve through 3D space.
+* HelloTriangle: This class uses a minimal amount of code to draw a single triangle on the screen using OpenGL 3. Comments have been added to explain every step.
