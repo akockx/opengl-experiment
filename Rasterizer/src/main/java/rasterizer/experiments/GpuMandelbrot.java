@@ -12,7 +12,12 @@ import rasterizer.util.OpenGLUtils;
 import rasterizer.util.ResourceLoader;
 import rasterizer.util.Utils;
 
-import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.Collections;
@@ -29,9 +34,10 @@ import java.util.concurrent.TimeUnit;
  * @author A.C. Kockx
  */
 public final class GpuMandelbrot {
-    private static final float FRAME_RATE = 30;//frames/second.
-    private static final float ZOOM_SPEED = 4;//ratio/second.
     private static final float PAN_SPEED = 3;//units/second.
+    private static final float ZOOM_SPEED = 4;//ratio/second.
+    private static final float FRAME_RATE = 30;//frames/second.
+    private static final float DELTA_T = 1/FRAME_RATE;//in seconds.
 
     //normalized device coordinates (x, y, z) of quad corners.
     private final float[] vertexCoordinates = new float[]{-1, -1, 0,
@@ -44,17 +50,15 @@ public final class GpuMandelbrot {
                                                             -2,  2,
                                                              2,  2};
 
-    private final float deltaT = 1/FRAME_RATE;//in seconds.
+    //at any given moment this stores the keyCodes of the keys that are currently being pressed down.
+    private final Set<Integer> pressedKeys = Collections.synchronizedSet(new HashSet<>());
     private final GLCanvas glCanvas;
 
-    //coordinates of current view in fractal space.
+    //current coordinates of view in fractal space.
     private float u = -0.5f;
     private float v = 0;
     private float magnification = 1;
     private float aspectRatio = 1;
-
-    //at any given moment this stores the keyCodes of the keys that are currently being pressed down.
-    private final Set<Integer> pressedKeys = Collections.synchronizedSet(new HashSet<>());
 
     public static void main(String[] args) throws Exception {
         new GpuMandelbrot();
@@ -69,7 +73,17 @@ public final class GpuMandelbrot {
         javax.swing.SwingUtilities.invokeAndWait(new Runnable() {
             @Override
             public void run() {
-                JFrame frame = Utils.createAndShowFrame(glCanvas, GpuMandelbrot.class.getSimpleName(), false);
+                JLabel label = new JLabel("W = zoom in, S = zoom out, ARROW KEYS = move around");
+                label.setBorder(new EmptyBorder(5, 5, 5, 5));
+                label.setForeground(Color.GREEN);
+                label.setBackground(Color.BLACK);
+                label.setOpaque(true);
+
+                JPanel panel = new JPanel(new BorderLayout());
+                panel.add(label, BorderLayout.NORTH);
+                panel.add(glCanvas, BorderLayout.CENTER);
+
+                Utils.createAndShowFrame(panel, GpuMandelbrot.class.getSimpleName(), false);
                 glCanvas.addKeyListener(keyListener);
                 glCanvas.requestFocus();
             }
@@ -77,22 +91,18 @@ public final class GpuMandelbrot {
 
         //start interaction loop.
         ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-        executor.scheduleAtFixedRate(interactionLoop, 0, (long) (1000*deltaT), TimeUnit.MILLISECONDS);
+        executor.scheduleAtFixedRate(interactionLoop, 0, (long) (1000*DELTA_T), TimeUnit.MILLISECONDS);
     }
 
-    private final KeyListener keyListener = new KeyListener() {
+    private final KeyListener keyListener = new KeyAdapter() {
         @Override
         public void keyPressed(KeyEvent e) {
-            pressedKeys.add(e.getKeyCode());
+            pressedKeys.add(e.getExtendedKeyCode());
         }
 
         @Override
         public void keyReleased(KeyEvent e) {
-            pressedKeys.remove(e.getKeyCode());
-        }
-
-        @Override
-        public void keyTyped(KeyEvent e) {
+            pressedKeys.remove(e.getExtendedKeyCode());
         }
     };
 
@@ -100,27 +110,27 @@ public final class GpuMandelbrot {
         @Override
         public void run() {
             boolean viewDirty = false;
-            if (pressedKeys.contains(KeyEvent.VK_PAGE_UP)) {//zoom in.
-                magnification *= Math.pow(ZOOM_SPEED, deltaT);
+            if (pressedKeys.contains(KeyEvent.VK_W)) {//zoom in.
+                magnification *= Math.pow(ZOOM_SPEED, DELTA_T);
                 viewDirty = true;
-            } else if (pressedKeys.contains(KeyEvent.VK_PAGE_DOWN)) {//zoom out.
-                magnification /= Math.pow(ZOOM_SPEED, deltaT);
+            } else if (pressedKeys.contains(KeyEvent.VK_S)) {//zoom out.
+                magnification /= Math.pow(ZOOM_SPEED, DELTA_T);
                 viewDirty = true;
             }
 
             if (pressedKeys.contains(KeyEvent.VK_RIGHT)) {//pan right.
-                u += PAN_SPEED*deltaT/magnification;
+                u += PAN_SPEED*DELTA_T/magnification;
                 viewDirty = true;
             } else if (pressedKeys.contains(KeyEvent.VK_LEFT)) {//pan left.
-                u -= PAN_SPEED*deltaT/magnification;
+                u -= PAN_SPEED*DELTA_T/magnification;
                 viewDirty = true;
             }
 
             if (pressedKeys.contains(KeyEvent.VK_UP)) {//pan up.
-                v += PAN_SPEED*deltaT/magnification;
+                v += PAN_SPEED*DELTA_T/magnification;
                 viewDirty = true;
             } else if (pressedKeys.contains(KeyEvent.VK_DOWN)) {//pan down.
-                v -= PAN_SPEED*deltaT/magnification;
+                v -= PAN_SPEED*DELTA_T/magnification;
                 viewDirty = true;
             }
 

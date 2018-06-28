@@ -21,6 +21,8 @@ import java.io.InputStreamReader;
  * @author A.C. Kockx
  */
 public final class Utils {
+    private static final String ESCAPE_KEY_STROKE_STRING = "ESCAPE";
+
     private Utils() {
     }
 
@@ -30,12 +32,12 @@ public final class Utils {
      * @return the created frame.
      */
     public static JFrame createAndShowFrame(Component content, String title, boolean fullScreen) {
-        //create contentPane.
-        JPanel panel = new JPanel(new BorderLayout());
-        panel.add(content, BorderLayout.CENTER);
+        JPanel contentPane = new JPanel(new BorderLayout());
+        contentPane.add(content, BorderLayout.CENTER);
+
         //exit when escape key is pressed.
-        panel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ESCAPE"), "escape");
-        panel.getActionMap().put("escape", new AbstractAction() {
+        contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(ESCAPE_KEY_STROKE_STRING), ESCAPE_KEY_STROKE_STRING);
+        contentPane.getActionMap().put(ESCAPE_KEY_STROKE_STRING, new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 System.exit(0);
@@ -45,7 +47,7 @@ public final class Utils {
         //create frame.
         JFrame frame = new JFrame(title);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        frame.setContentPane(panel);
+        frame.setContentPane(contentPane);
 
         //display frame.
         if (fullScreen) {
