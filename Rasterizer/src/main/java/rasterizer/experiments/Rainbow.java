@@ -97,15 +97,16 @@ public final class Rainbow {
             float[][] points = new float[pointCount][dimensionCount];
             float[] firstSegmentDirectionUnitVector = new float[]{1, 0, 0};
             float[] bankingAnglesInDegrees = new float[pointCount];
-            for (int t = 0; t < points.length; t++) {
-                float x = (float) -sin(2*PI*t/(pointCount - 1f))/10;
+            for (int pointIndex = 0; pointIndex < points.length; pointIndex++) {
+                float t = pointIndex/(pointCount - 1f);
+                float x = -0.5f + t - (float) sin(2*PI*t)/2;
                 float y = 0;
-                float z = -2*t/(pointCount - 1f);
-                points[t] = new float[]{x, y, z};
-                bankingAnglesInDegrees[t] = 90*t/(pointCount - 1f);
+                float z = -2*t - (float) sin(2*PI*t)/2;
+                points[pointIndex] = new float[]{x, y, z};
+                bankingAnglesInDegrees[pointIndex] = 0;
             }
             //create rainbow geometry.
-            float[][][] allVertices = createRainbowGeometry(points, 1, firstSegmentDirectionUnitVector, bankingAnglesInDegrees);
+            float[][][] allVertices = createRainbowGeometry(points, 0.3f, firstSegmentDirectionUnitVector, bankingAnglesInDegrees);
             int segmentCount = allVertices.length;
             int vertexCountPerSegment = allVertices[0].length;
             float[] uCoordinates = new float[vertexCountPerSegment];
@@ -139,10 +140,10 @@ public final class Rainbow {
                 }
                 triangleStripIds[triangleStripIndex] = OpenGLUtils.createVertexArray(gl, new int[]{dimensionCount, 2}, new float[][]{coordinates, uvCoordinates});
             }
-            modelMatrix = MatrixUtils.createModelMatrix(-1, 0, 0, -90, 0, 90, 1, 1, 1);
+            modelMatrix = MatrixUtils.createModelMatrix(-1, 0, 0, -90, 45, 90, 1, 1, 1);
 
             //create camera.
-            viewMatrix = MatrixUtils.createViewMatrix(0, 0, 4, 0, 0, 0);
+            viewMatrix = MatrixUtils.createViewMatrix(-0.3f, 0.7f, 4, 0, 0, 0);
 
             int error = gl.glGetError();
             if (error != 0) System.err.println("Error during initialization: " + error);
@@ -158,7 +159,7 @@ public final class Rainbow {
             float aspectRatio = width/((float) height);
 
             //(re)initialize projection matrix.
-            projectionMatrix = MatrixUtils.createOrthographicProjectionMatrix(2, aspectRatio, 1, 100);
+            projectionMatrix = MatrixUtils.createOrthographicProjectionMatrix(2, aspectRatio, 0.1f, 100);
         }
 
         @Override
